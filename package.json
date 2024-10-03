@@ -1,0 +1,16 @@
+{
+    "name": "Skeet",
+    "version": "0.1.0",
+    "description": "A project repository for Skeet",
+    "main": "index.js",
+    "scripts": {
+      "start": "five-server --port=8000"
+    },
+    "author": "Ryan",
+    "license": "MIT",
+    "dependencies": {
+        "five-server": "0.3.3"
+    },
+    "devDependencies": {}
+  }
+  
