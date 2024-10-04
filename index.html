@@ -30,6 +30,8 @@
               if (targetedClayPigeon) {
                 // Hide the clay pigeon if it was hit
                 targetedClayPigeon.setAttribute('visible', 'false');
+                targetedClayPigeon.removeAttribute('animation')
+                document.getElementById('clayPigeonBreakEntity').components.sound.playSound();
                 console.log("Pigeon shot:", targetedClayPigeon.id);
                 targetedClayPigeon = null; // Reset after shooting
               } else {
@@ -59,8 +61,10 @@
             <a-assets>
                 <a-asset-item id="shotgun" src="/assets/shotgun/shotgun.gltf"></a-asset-item>
                 <a-asset-item id="clay-pigeon" src="/assets/clay-pigeon/scene.gltf"></a-asset-item>
+                <audio id="clayPigeonBreak" src="/assets/sounds/clay-pigeon-breaking.wav" preload="auto"></audio>
             </a-assets>
-
+            
+            <a-entity id="clayPigeonBreakEntity" sound="src: #clayPigeonBreak"></a-entity>
             <!-- Multiple clay pigeons with different animations -->
             <a-entity 
               id="clayPigeon1" 
