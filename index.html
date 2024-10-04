@@ -4,40 +4,6 @@
         <script src="https://aframe.io/releases/1.6.0/aframe.min.js"></script>
         <script src="https://unpkg.com/aframe-environment-component/dist/aframe-environment-component.min.js"></script>
         <script>
-            // Component to handle click and touch on the fakeButton
-            AFRAME.registerComponent('button', {
-              init: function () {
-                const clayPigeon = document.getElementById('clayPigeon');
-                let isIntersecting = false;
-
-                // Detect if the mouse or touch is intersecting with the button
-                this.el.addEventListener('raycaster-intersected', () => {
-                    isIntersecting = true;
-                });
-
-                // Detect if the mouse or touch stops intersecting with the button
-                this.el.addEventListener('raycaster-intersected-cleared', () => {
-                    isIntersecting = false;
-                });
-
-                // Add click event listener to hide clayPigeon if intersecting
-                this.el.addEventListener('click', function() {
-                    console.log("test")
-                    if (isIntersecting) {
-                        console.log("Button clicked while intersecting.");
-                        clayPigeon.setAttribute('visible', 'false');
-                    }
-                });
-
-                // Add touchstart event listener to hide clayPigeon if intersecting
-                this.el.addEventListener('touchstart', function() {
-                    if (isIntersecting) {
-                        clayPigeon.setAttribute('visible', 'false');
-                    }
-                }, { passive: true });
-              }
-            });
-
             // Component for detecting if shotgun raycaster hits the clayPigeon
             AFRAME.registerComponent('shotgun-raycaster', {
               init: function () {
@@ -57,6 +23,20 @@
             });
 
         </script>
+        <style>
+            /* CSS to position the button */
+            #myButton {
+                position: absolute;
+                top: 20px; /* Adjust this value to position vertically */
+                left: 20px; /* Adjust this value to position horizontally */
+                z-index: 10; /* Ensure it appears above the A-Frame canvas */
+                padding: 10px 20px;
+                background-color: white;
+                border: 1px solid black;
+                border-radius: 5px;
+                cursor: pointer;
+            }
+        </style>
     </head>
     <body>
         <a-scene>
@@ -71,29 +51,27 @@
             <!-- Camera with look-controls -->
             <a-entity camera look-controls position="0 1.6 0">
                 
-                <!-- Shotgun with raycaster to detect clayPigeon 
+                <!-- Shotgun with raycaster to detect clayPigeon -->
                 <a-entity 
                   gltf-model="#shotgun" 
                   shotgun-raycaster
-                  raycaster="objects: .collidable; far: 100; showLine: true; interval: 500" 
-                  rotation="-30 220 20" 
+                  raycaster="objects: .collidable; far: 100; showLine: true; interval: 500"></a-entity>
+                  <!--rotation="-30 220 20" 
                   position="0.5 -0.6 -1">
                 </a-entity> -->
-                
-                <!-- Fake button for shooting -->
-                
-                <a-entity id="fakeButton" button position="0 0 -2" class="clickable" visible="true"> <!-- position: 0 -1.3 -2 -->
-                    <a-circle color="white" radius="0.3" position="0 0 0"></a-circle>
-                    <a-text value="Shoot" color="black" align="center" position="0 0 0.01" width="2"></a-text>
-                </a-entity>          
-                
-                <!-- Cursor for clicking with mouse or touch --
-                <a-entity cursor="rayOrigin: mouse" raycaster="objects: .clickable; showLine: true;" position="0 0 0"></a-entity> -->
             </a-entity>
-            
             
             <!-- Environment -->
             <a-entity environment="preset: forest; dressingAmount: 500"></a-entity>
         </a-scene>
+        <button id="myButton">Click</button>
+        <script>
+            // JavaScript to handle button click
+            document.getElementById('myButton').addEventListener('click', function() {
+                const clayPigeon = document.getElementById('clayPigeon');
+                clayPigeon.setAttribute('visible', 'false'); // Hides the clay pigeon
+                console.log('Button clicked! Clay pigeon hidden.');
+            });
+        </script>
     </body>
 </html>
