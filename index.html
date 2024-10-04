@@ -1,39 +1,48 @@
 <html>
-    <head>  
+    <head>
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <script src="https://aframe.io/releases/1.6.0/aframe.min.js"></script>
         <script src="https://unpkg.com/aframe-environment-component/dist/aframe-environment-component.min.js"></script>
         <script>
-            // Component for detecting if shotgun raycaster hits the clayPigeon
-            var inlineWithClayPigeon = false;
+            let targetedClayPigeon = null; // Variable to track the intersected clay pigeon
+
             AFRAME.registerComponent('shotgun-raycaster', {
               init: function () {
-                const clayPigeon = document.getElementById('clayPigeon');
                 const raycasterEl = this.el;
-
-                // Event listener to detect intersection with the clayPigeon
+                
+                // Event listener to detect intersection with objects
                 raycasterEl.addEventListener('raycaster-intersection', function(event) {
-                  const intersects = event.detail.intersections;
-
-                  // Check if the clayPigeon is one of the intersected objects
-                  if (intersects.length > 0 && intersects[0].object.el === clayPigeon) {
-                    console.log("shotgun has clay pigeon insights")
-                    inlineWithClayPigeon = true;
-                  } else {
-                    inlineWithClayPigeon = false;
-                  }
+                    console.log("rayCaster-intersection entered")
+                    const intersects = event.detail.intersections;
+                    if (intersects.length > 0 && intersects[0].object.el.classList.contains('collidable')) {
+                        targetedClayPigeon = intersects[0].object.el;
+                        console.log("Shotgun aimed at", targetedClayPigeon.id);
+                    } else {
+                    console.log("no target in line of sight")
+                    targetedClayPigeon = null; // No target in line of sight
+                    }
                 });
               }
             });
 
+            // Function to handle the shoot button click
+            function shootClayPigeon() {
+              if (targetedClayPigeon) {
+                // Hide the clay pigeon if it was hit
+                targetedClayPigeon.setAttribute('visible', 'false');
+                console.log("Pigeon shot:", targetedClayPigeon.id);
+                targetedClayPigeon = null; // Reset after shooting
+              } else {
+                console.log("No pigeon in sight");
+              }
+            }
         </script>
         <style>
-            /* CSS to position the button */
             #shoot {
                 position: absolute;
-                bottom: 20px; /* Adjust this value to position vertically */
-                left: 45%; /* Adjust this value to position horizontally */
-                z-index: 10; /* Ensure it appears above the A-Frame canvas */
+                bottom: 20px;
+                left: 45%;
+                z-index: 10;
                 padding: 5px 10px;
                 background-color: rgba(255, 255, 255, 0.4);
                 border: 1px solid black;
@@ -48,51 +57,63 @@
     <body>
         <a-scene>
             <a-assets>
-                <a-asset-item id="shotgun" src="https://cdn.jsdelivr.net/gh/NeoAlchemy/skeet@main/assets/shotgun/shotgun.gltf"></a-asset-item>
-                <a-asset-item id="clay-pigeon" src="https://cdn.jsdelivr.net/gh/NeoAlchemy/skeet@main/assets/clay-pigeon/scene.gltf"></a-asset-item>
+                <a-asset-item id="shotgun" src="/assets/shotgun/shotgun.gltf"></a-asset-item>
+                <a-asset-item id="clay-pigeon" src="/assets/clay-pigeon/scene.gltf"></a-asset-item>
             </a-assets>
 
-            <!-- Clay pigeon target -->
+            <!-- Multiple clay pigeons with different animations -->
             <a-entity 
-                id="clayPigeon" 
-                class="collidable" 
-                gltf-model="#clay-pigeon" 
-                position="-10 1 -20" 
-                visible="true"
-                animation="property: position; to: 10 5 -30; dur: 4000; easing: linear; loop: true">
+              id="clayPigeon1" 
+              class="collidable" 
+              gltf-model="#clay-pigeon" 
+              position="-10 1 -20" 
+              visible="true"
+              animation="property: position; to: 10 5 -30; dur: 4000; easing: linear; loop: true">
             </a-entity>
+
+            <a-entity 
+              id="clayPigeon2" 
+              class="collidable" 
+              gltf-model="#clay-pigeon" 
+              position="-5 2 -15" 
+              visible="true"
+              animation="property: position; to: 12 6 -25; dur: 6000; easing: easeInOutQuad; loop: true">
+            </a-entity>
+
+            <a-entity 
+              id="clayPigeon3" 
+              class="collidable" 
+              gltf-model="#clay-pigeon" 
+              position="-15 3 -10" 
+              visible="true"
+              animation="property: position; to: 5 8 -20; dur: 5000; easing: easeOutQuad; loop: true">
+            </a-entity>
+
+            
 
             <!-- Camera with look-controls -->
             <a-entity camera look-controls position="0 1.6 0">
                 <!-- Dot showing where raycaster is aiming -->
                 <a-sphere id="aimDot" color="red" radius="0.01" position="0 0 -3" visible="true"></a-sphere>
-
                 <a-entity 
                     id="raycasterEl" 
                     shotgun-raycaster
                     raycaster="objects: .collidable; far: 100; showLine: true; interval: 100" 
                     position="0 0 -1"> 
                 </a-entity>
-                <!-- Shotgun with raycaster to detect clayPigeon -->
+                <!-- Shotgun with raycaster to detect clayPigeons -->
                 <a-entity 
-                    gltf-model="#shotgun" 
-                    rotation="-30 220 20"
-                    position="0.5 -0.6 -1">
+                  gltf-model="#shotgun" 
+                  rotation="-30 220 20"
+                  position="0.5 -0.6 -1">
                 </a-entity>
             </a-entity>
             
             <!-- Environment -->
             <a-entity environment="preset: forest; dressingAmount: 500"></a-entity>
         </a-scene>
-        <button id="shoot">Shoot</button>
-        <script>
-            // JavaScript to handle button click
-            document.getElementById('shoot').addEventListener('click', function() {
-                const clayPigeon = document.getElementById('clayPigeon');
-                if (inlineWithClayPigeon) {
-                    clayPigeon.setAttribute('visible', 'false'); // Hides the clay pigeon
-                } 
-            });
-        </script>
+        
+        <!-- Shoot button -->
+        <button id="shoot" onclick="shootClayPigeon()">Shoot</button>
     </body>
 </html>
