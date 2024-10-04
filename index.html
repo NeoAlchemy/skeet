@@ -5,6 +5,7 @@
         <script src="https://unpkg.com/aframe-environment-component/dist/aframe-environment-component.min.js"></script>
         <script>
             // Component for detecting if shotgun raycaster hits the clayPigeon
+            var inlineWithClayPigeon = false;
             AFRAME.registerComponent('shotgun-raycaster', {
               init: function () {
                 const clayPigeon = document.getElementById('clayPigeon');
@@ -16,7 +17,10 @@
 
                   // Check if the clayPigeon is one of the intersected objects
                   if (intersects.length > 0 && intersects[0].object.el === clayPigeon) {
-                    console.log('Shotgun hit the clay pigeon!');
+                    console.log("shotgun has clay pigeon insights")
+                    inlineWithClayPigeon = true;
+                  } else {
+                    inlineWithClayPigeon = false;
                   }
                 });
               }
@@ -25,16 +29,19 @@
         </script>
         <style>
             /* CSS to position the button */
-            #myButton {
+            #shoot {
                 position: absolute;
-                top: 20px; /* Adjust this value to position vertically */
-                left: 20px; /* Adjust this value to position horizontally */
+                bottom: 20px; /* Adjust this value to position vertically */
+                left: 45%; /* Adjust this value to position horizontally */
                 z-index: 10; /* Ensure it appears above the A-Frame canvas */
-                padding: 10px 20px;
-                background-color: white;
+                padding: 5px 10px;
+                background-color: rgba(255, 255, 255, 0.4);
                 border: 1px solid black;
-                border-radius: 5px;
+                border-radius: 100px;
+                width: 100px;
+                height: 100px;
                 cursor: pointer;
+                font-size: larger;
             }
         </style>
     </head>
@@ -55,22 +62,23 @@
                 <a-entity 
                   gltf-model="#shotgun" 
                   shotgun-raycaster
-                  raycaster="objects: .collidable; far: 100; showLine: true; interval: 500"></a-entity>
-                  <!--rotation="-30 220 20" 
+                  raycaster="objects: .collidable; far: 100; showLine: true; interval: 100"
+                  rotation="-30 220 20"
                   position="0.5 -0.6 -1">
-                </a-entity> -->
+                </a-entity>
             </a-entity>
             
             <!-- Environment -->
             <a-entity environment="preset: forest; dressingAmount: 500"></a-entity>
         </a-scene>
-        <button id="myButton">Click</button>
+        <button id="shoot">Shoot</button>
         <script>
             // JavaScript to handle button click
-            document.getElementById('myButton').addEventListener('click', function() {
+            document.getElementById('shoot').addEventListener('click', function() {
                 const clayPigeon = document.getElementById('clayPigeon');
-                clayPigeon.setAttribute('visible', 'false'); // Hides the clay pigeon
-                console.log('Button clicked! Clay pigeon hidden.');
+                if (inlineWithClayPigeon) {
+                    clayPigeon.setAttribute('visible', 'false'); // Hides the clay pigeon
+                } 
             });
         </script>
     </body>
