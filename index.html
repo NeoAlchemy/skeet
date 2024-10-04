@@ -57,7 +57,7 @@
                     if (id === 'clayPigeon1') {
                         pigeon.setAttribute('position', '-10 0 -20');
                         pigeon.setAttribute('animation__fall', 'property: position; from: 0 20 -25; dur: 3000; easing: easeInOutQuad; to: 10 0 -30; loop: true');
-                        pigeon.setAttribute('animation__smaller', 'property: scale; dur: 3000; to: 0.001 0.001 0.001; loop: true');
+                        pigeon.setAttribute('animation__smaller', 'property: scale; dur: 3000; to: 0.1 0.1 0.1; loop: true');
                     } else if (id === 'clayPigeon2') {
                         pigeon.setAttribute('position', '-5 2 -15');
                         pigeon.setAttribute('animation', 'property: position; to: 12 6 -25; dur: 6000; easing: easeInOutQuad; loop: true');
@@ -71,12 +71,12 @@
             }
 
             document.addEventListener('gesturestart', function (e) {
-                e.preventDefault(); // Disable gestures (like zoom)
-            });
+            e.preventDefault(); // Disable gestures (like zoom)
+        });
 
-            document.addEventListener('dblclick', function (e) {
-                e.preventDefault(); // Prevent double-click zoom
-            });
+        document.addEventListener('dblclick', function (e) {
+            e.preventDefault(); // Prevent double-click zoom
+        });
         </script>
         <style>
             html, body {
@@ -110,7 +110,7 @@
         <a-scene>
             <a-assets>
                 <a-asset-item id="shotgun" src="https://cdn.jsdelivr.net/gh/NeoAlchemy/skeet@main/assets/shotgun/shotgun.gltf"></a-asset-item>
-                <a-asset-item id="clay-pigeon" src="https://cdn.jsdelivr.net/gh/NeoAlchemy/skeet@main/assets/clay-pigeon-2/scene.gltf" preload="auto"></a-asset-item>
+                <a-asset-item id="clay-pigeon" src="https://cdn.jsdelivr.net/gh/NeoAlchemy/skeet@main/assets/clay-pigeon/scene.gltf" preload="auto"></a-asset-item>
                 <audio id="clayPigeonBreak" src="https://cdn.jsdelivr.net/gh/NeoAlchemy/skeet@main/assets/sounds/clay-pigeon-breaking.wav" preload="auto"></audio>
                 <audio id="skeetFire" src="https://cdn.jsdelivr.net/gh/NeoAlchemy/skeet@main/assets/sounds/skeet-fire.wav" preload="auto"></audio>
             </a-assets>
@@ -124,8 +124,6 @@
                 gltf-model="#clay-pigeon" 
                 position="-10 0 -20" 
                 visible="true"
-                scale="0.01 0.01 0.01"
-                material="color: orange"
                 animation__fall="property: position;
                     from: 0 20 -25; 
                     dur: 3000; 
@@ -134,7 +132,7 @@
                     loop: true"
                 animation__smaller="property: scale;
                     dur: 3000; 
-                    to: 0.001 0.001 0.001;
+                    to: 0.1 0.1 0.1;
                     loop: true" >
             </a-entity>
             <!-- <a-entity 
@@ -151,11 +149,10 @@
               class="collidable" 
               gltf-model="#clay-pigeon" 
               position="-15 2 -15" 
-              scale="0.01 0.01 0.01"
               material="color: orange"
               visible="true"
               animation="property: position; to: 15 6 -35; dur: 6000; easing: easeInOutQuad; loop: true"
-              animation__smaller="property: scale; dur: 6000; to: 0.001 0.001 0.001; loop: true">
+              animation__smaller="property: scale; dur: 6000; to: 0.1 0.1 0.1; loop: true">
             </a-entity>
 
             <a-entity 
@@ -163,7 +160,6 @@
               class="collidable" 
               gltf-model="#clay-pigeon" 
               position="-15 3 -10" 
-              scale="0.01 0.01 0.01"
               material="color: orange"
               visible="true"
               animation="property: position; to: 5 8 -20; dur: 5000; easing: easeOutQuad; loop: true">
