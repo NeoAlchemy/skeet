@@ -77,6 +77,25 @@
         document.addEventListener('dblclick', function (e) {
             e.preventDefault(); // Prevent double-click zoom
         });
+
+        function startVR() {
+            document.querySelector('.launch-screen').style.display = 'none';
+            
+            document.getElementById('shoot').style.display = 'block';
+            document.getElementById('restart').style.display = 'block';
+            document.getElementById('vrScene').style.display = 'block';
+
+            const vrScene = document.getElementById('vrScene');
+
+            // Once the scene has loaded, hide the loading screen and show the VR scene
+            vrScene.addEventListener('loaded', function() {
+                document.getElementById('loadingScreen').style.display = 'none';
+                vrScene.style.display = 'block';
+            });
+
+            // Force loading of A-Frame assets
+            vrScene.setAttribute('visible', 'true');
+        };
         </script>
         <style>
             html, body {
@@ -104,10 +123,47 @@
             #reset {
                 left: 55%;
             }
+
+            .launch-screen {
+                height: 100%;
+                margin: 0;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                background-color: #333;
+                color: white;
+                font-family: Arial, sans-serif;
+                text-align: center;
+            }
+
+            .launch-screen div {
+                text-align: center;
+            }
+
+            #startVRButton {
+                padding: 10px 20px;
+                background-color: #007BFF;
+                border: none;
+                color: white;
+                cursor: pointer;
+                font-size: 1.2em;
+                border-radius: 5px;
+            }
+
+            #startVRButton:hover {
+                background-color: #0056b3;
+            }
         </style>
     </head>
     <body>
-        <a-scene>
+        <div class="launch-screen">
+            <div>
+                <h1>Welcome to the Skeet Shooting</h1>
+                <p>Click the button below to start</p>
+                <button id="startVRButton" onclick="startVR()">Start VR</button>
+            </div>
+        </div>
+        <a-scene id="vrScene" style="display: none;">
             <a-assets>
                 <a-asset-item id="shotgun" src="https://cdn.jsdelivr.net/gh/NeoAlchemy/skeet@main/assets/shotgun/shotgun.gltf"></a-asset-item>
                 <a-asset-item id="clay-pigeon" src="https://cdn.jsdelivr.net/gh/NeoAlchemy/skeet@main/assets/clay-pigeon/scene.gltf" preload="auto"></a-asset-item>
@@ -143,7 +199,7 @@
                 scale="0.01 0.01 0.01"
                 visible="true"
                 animation="property: position; to: 10 5 -30; dur: 4000; easing: linear; loop: true">
-            </a-entity> -->
+            </a-entity> --
             <a-entity 
               id="clayPigeon2" 
               class="collidable" 
@@ -163,7 +219,7 @@
               material="color: orange"
               visible="true"
               animation="property: position; to: 5 8 -20; dur: 5000; easing: easeOutQuad; loop: true">
-            </a-entity>
+            </a-entity> -->
 
             
 
@@ -190,7 +246,7 @@
         </a-scene>
         
         <!-- button -->
-        <button id="shoot" onclick="shootClayPigeon()">Shoot</button>
-        <button id="restart" onclick="resetGame()">Restart</button>
+        <button id="shoot" style="display: none" onclick="shootClayPigeon()">Shoot</button>
+        <button id="restart" style="display: none" onclick="resetGame()">Restart</button>
     </body>
 </html>
