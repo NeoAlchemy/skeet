@@ -1,0 +1,11 @@
+Model Information:
+* title:	Clay Pigeon
+* source:	https://sketchfab.com/3d-models/clay-pigeon-15a287fdf64245e68719ab2170a40c1f
+* author:	OKgamedev (https://sketchfab.com/OKgamedev)
+
+Model License:
+* license type:	CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
+* requirements:	Author must be credited. Commercial use is allowed.
+
+If you use this 3D model in your project be sure to copy paste this credit wherever you share it:
+This work is based on "Clay Pigeon" (https://sketchfab.com/3d-models/clay-pigeon-15a287fdf64245e68719ab2170a40c1f) by OKgamedev (https://sketchfab.com/OKgamedev) licensed under CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
