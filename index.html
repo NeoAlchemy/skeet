@@ -27,16 +27,17 @@
 
             // Function to handle the shoot button click
             function shootClayPigeon() {
-              if (targetedClayPigeon) {
-                // Hide the clay pigeon if it was hit
-                targetedClayPigeon.setAttribute('visible', 'false');
-                targetedClayPigeon.removeAttribute('animation')
-                document.getElementById('clayPigeonBreakEntity').components.sound.playSound();
-                console.log("Pigeon shot:", targetedClayPigeon.id);
-                targetedClayPigeon = null; // Reset after shooting
-              } else {
-                console.log("No pigeon in sight");
-              }
+                document.getElementById('skeetFireEntity').components.sound.playSound();
+                if (targetedClayPigeon) {
+                    // Hide the clay pigeon if it was hit
+                    targetedClayPigeon.setAttribute('visible', 'false');
+                    targetedClayPigeon.removeAttribute('animation')
+                    document.getElementById('clayPigeonBreakEntity').components.sound.playSound();
+                    console.log("Pigeon shot:", targetedClayPigeon.id);
+                    targetedClayPigeon = null; // Reset after shooting
+                } else {
+                    console.log("No pigeon in sight");
+                }
             }
         </script>
         <style>
@@ -62,9 +63,11 @@
                 <a-asset-item id="shotgun" src="https://cdn.jsdelivr.net/gh/NeoAlchemy/skeet@main/assets/shotgun/shotgun.gltf"></a-asset-item>
                 <a-asset-item id="clay-pigeon" src="https://cdn.jsdelivr.net/gh/NeoAlchemy/skeet@main/assets/clay-pigeon/scene.gltf"></a-asset-item>
                 <audio id="clayPigeonBreak" src="https://cdn.jsdelivr.net/gh/NeoAlchemy/skeet@main/assets/sounds/clay-pigeon-breaking.wav" preload="auto"></audio>
+                <audio id="skeetFire" src="https://cdn.jsdelivr.net/gh/NeoAlchemy/skeet@main/assets/sounds/skeet-fire.wav" preload="auto"></audio>
             </a-assets>
             
             <a-entity id="clayPigeonBreakEntity" sound="src: #clayPigeonBreak"></a-entity>
+            <a-entity id="skeetFireEntity" sound="src: #skeetFire"></a-entity>
             <!-- Multiple clay pigeons with different animations -->
             <a-entity 
               id="clayPigeon1" 
