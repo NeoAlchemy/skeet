@@ -32,7 +32,9 @@
                     // Hide the clay pigeon if it was hit
                     targetedClayPigeon.setAttribute('visible', 'false');
                     targetedClayPigeon.removeAttribute('animation')
-                    document.getElementById('clayPigeonBreakEntity').components.sound.playSound();
+                    setTimeout(() => {
+                        document.getElementById('clayPigeonBreakEntity').components.sound.playSound();
+                    }, 200);
                     console.log("Pigeon shot:", targetedClayPigeon.id);
                     targetedClayPigeon = null; // Reset after shooting
                 } else {
