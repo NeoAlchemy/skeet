@@ -53,7 +53,14 @@
             </a-assets>
 
             <!-- Clay pigeon target -->
-            <a-entity id="clayPigeon" class="collidable" gltf-model="#clay-pigeon" position="0 1 -20" visible="true"></a-entity>
+            <a-entity 
+                id="clayPigeon" 
+                class="collidable" 
+                gltf-model="#clay-pigeon" 
+                position="-10 1 -20" 
+                visible="true"
+                animation="property: position; to: 10 5 -30; dur: 4000; easing: linear; loop: true">
+            </a-entity>
 
             <!-- Camera with look-controls -->
             <a-entity camera look-controls position="0 1.6 0">
