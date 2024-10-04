@@ -48,8 +48,8 @@
     <body>
         <a-scene>
             <a-assets>
-                <a-asset-item id="shotgun" src="/assets/shotgun/shotgun.gltf"></a-asset-item>
-                <a-asset-item id="clay-pigeon" src="/assets/clay-pigeon/scene.gltf"></a-asset-item>
+                <a-asset-item id="shotgun" src="https://cdn.jsdelivr.net/gh/NeoAlchemy/skeet@main/assets/shotgun/shotgun.gltf"></a-asset-item>
+                <a-asset-item id="clay-pigeon" src="https://cdn.jsdelivr.net/gh/NeoAlchemy/skeet@main/assets/clay-pigeon/scene.gltf"></a-asset-item>
             </a-assets>
 
             <!-- Clay pigeon target -->
@@ -57,14 +57,20 @@
 
             <!-- Camera with look-controls -->
             <a-entity camera look-controls position="0 1.6 0">
-                
+                <!-- Dot showing where raycaster is aiming -->
+                <a-sphere id="aimDot" color="red" radius="0.01" position="0 0 -3" visible="true"></a-sphere>
+
+                <a-entity 
+                    id="raycasterEl" 
+                    shotgun-raycaster
+                    raycaster="objects: .collidable; far: 100; showLine: true; interval: 100" 
+                    position="0 0 -1"> 
+                </a-entity>
                 <!-- Shotgun with raycaster to detect clayPigeon -->
                 <a-entity 
-                  gltf-model="#shotgun" 
-                  shotgun-raycaster
-                  raycaster="objects: .collidable; far: 100; showLine: true; interval: 100"
-                  rotation="-30 220 20"
-                  position="0.5 -0.6 -1">
+                    gltf-model="#shotgun" 
+                    rotation="-30 220 20"
+                    position="0.5 -0.6 -1">
                 </a-entity>
             </a-entity>
             
