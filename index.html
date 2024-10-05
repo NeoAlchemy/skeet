@@ -90,7 +90,11 @@
             document.getElementById('restart').style.display = 'block';
             document.getElementById('vrScene').style.display = 'block';
             document.getElementById('points').style.display = 'block';
-
+            let shotgunShellList = document.querySelectorAll('.shotgunShell')
+            shotgunShellList.forEach((shell) => {
+                shell.style.display = 'block';
+            })
+            
             const vrScene = document.getElementById('vrScene');
 
             // Once the scene has loaded, hide the loading screen and show the VR scene
@@ -131,6 +135,28 @@
                 color: white;
                 font-size: xx-large;
                 
+            }
+
+            .shotgunShell {
+                position: absolute;
+                right: 20px;
+                z-index: 10;
+                padding: 5px 10px;
+                height: 5%;
+                transform: rotate(270deg);
+            }
+
+            #shotgunShell1 {
+                top: 20px;
+                opacity: 0.3
+            }
+
+            #shotgunShell2 {
+                top: 50px;
+            }
+
+            #shotgunShell3 {
+                top: 80px;
             }
             
             #shoot {
@@ -264,8 +290,11 @@
             <!-- Environment -->
             <a-entity environment="preset: forest; dressingAmount: 500"></a-entity>
         </a-scene>
-        <a id="myEnterVRButton" href="#"></a>
-        <a id="myEnterARButton" href="#"></a>        <span id="points" style="display: none">0</span>
+        <img src="assets/images/shotgun-shell.png" id="shotgunShell1" class="shotgunShell" style="display: none;" />     
+        <img src="assets/images/shotgun-shell.png" id="shotgunShell2" class="shotgunShell" style="display: none;" />     
+        <img src="assets/images/shotgun-shell.png" id="shotgunShell3" class="shotgunShell" style="display: none;" />     
+        
+        <span id="points" style="display: none">0</span>
         <!-- button -->
         <button id="shoot" style="display: none" onclick="shootClayPigeon()">Shoot</button>
         <button id="restart" style="display: none" onclick="resetGame()">Restart</button>
