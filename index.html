@@ -180,7 +180,7 @@
                 <button id="startVRButton" onclick="startVR()">Start VR</button>
             </div>
         </div>
-        <a-scene id="vrScene" style="display: none;" xr-mode-ui="enabled: false">
+        <a-scene id="vrScene" style="display: none;" xr-mode-ui="enabled: true;" real-world-meshing>
             <a-assets>
                 <a-asset-item id="shotgun" src="https://cdn.jsdelivr.net/gh/NeoAlchemy/skeet@main/assets/shotgun/shotgun.gltf"></a-asset-item>
                 <a-asset-item id="clay-pigeon" src="https://cdn.jsdelivr.net/gh/NeoAlchemy/skeet@main/assets/clay-pigeon/scene.gltf" preload="auto"></a-asset-item>
@@ -262,8 +262,8 @@
             <!-- Environment -->
             <a-entity environment="preset: forest; dressingAmount: 500"></a-entity>
         </a-scene>
-        
-        <span id="points" style="display: none">0</span>
+        <a id="myEnterVRButton" href="#"></a>
+        <a id="myEnterARButton" href="#"></a>        <span id="points" style="display: none">0</span>
         <!-- button -->
         <button id="shoot" style="display: none" onclick="shootClayPigeon()">Shoot</button>
         <button id="restart" style="display: none" onclick="resetGame()">Restart</button>
