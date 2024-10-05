@@ -5,6 +5,7 @@
         <script src="https://unpkg.com/aframe-environment-component/dist/aframe-environment-component.min.js"></script>
         <script>
             let targetedClayPigeon = null; // Variable to track the intersected clay pigeon
+            let points = 0; // Variable to track points earned
 
             AFRAME.registerComponent('shotgun-raycaster', {
               init: function () {
@@ -33,9 +34,13 @@
                     targetedClayPigeon.setAttribute('visible', 'false');
                     targetedClayPigeon.removeAttribute('animation')
                     targetedClayPigeon.setAttribute('position', '-100, -100,')
+                    let targetedClayPigeonPoints = targetedClayPigeon.getAttribute('data-points');
+                    console.log("points earned: " + targetedClayPigeonPoints +"!");
+                    points += Number(targetedClayPigeonPoints);
                     setTimeout(() => {
                         document.getElementById('clayPigeonBreakEntity').components.sound.playSound();
                     }, 200);
+                    document.getElementById("points").innerHTML = points;
                     console.log("Pigeon shot:", targetedClayPigeon.id);
                     targetedClayPigeon = null; // Reset after shooting
                 } else {
@@ -84,6 +89,7 @@
             document.getElementById('shoot').style.display = 'block';
             document.getElementById('restart').style.display = 'block';
             document.getElementById('vrScene').style.display = 'block';
+            document.getElementById('points').style.display = 'block';
 
             const vrScene = document.getElementById('vrScene');
 
@@ -114,6 +120,17 @@
                 height: 100px;
                 cursor: pointer;
                 font-size: larger;
+            }
+
+            #points {
+                position: absolute;
+                top: 20px;
+                left: 20px;
+                z-index: 10;
+                padding: 5px 10px;
+                color: white;
+                font-size: xx-large;
+                
             }
             
             #shoot {
@@ -163,7 +180,7 @@
                 <button id="startVRButton" onclick="startVR()">Start VR</button>
             </div>
         </div>
-        <a-scene id="vrScene" style="display: none;">
+        <a-scene id="vrScene" style="display: none;" vr-mode-ui="enabled: false" renderer="logarithmicDepthBuffer: true;" xr-mode="ar" arjs="trackingMethod: best;">
             <a-assets>
                 <a-asset-item id="shotgun" src="https://cdn.jsdelivr.net/gh/NeoAlchemy/skeet@main/assets/shotgun/shotgun.gltf"></a-asset-item>
                 <a-asset-item id="clay-pigeon" src="https://cdn.jsdelivr.net/gh/NeoAlchemy/skeet@main/assets/clay-pigeon/scene.gltf" preload="auto"></a-asset-item>
@@ -178,6 +195,7 @@
                 id="clayPigeon1" 
                 class="collidable" 
                 gltf-model="#clay-pigeon" 
+                data-points="50"
                 position="-10 0 -20" 
                 visible="true"
                 animation__fall="property: position;
@@ -224,7 +242,7 @@
             
 
             <!-- Camera with look-controls -->
-            <a-entity camera look-controls position="0 1.6 0">
+            <a-entity camera ook-controls="enabled: true" position="0 1.6 0">
                 <!-- Dot showing where raycaster is aiming -->
                 <a-sphere id="aimDot" color="red" radius="0.01" position="0 0 -3" visible="true"></a-sphere>
                 <a-entity 
@@ -245,6 +263,7 @@
             <a-entity environment="preset: forest; dressingAmount: 500"></a-entity>
         </a-scene>
         
+        <span id="points" style="display: none">0</span>
         <!-- button -->
         <button id="shoot" style="display: none" onclick="shootClayPigeon()">Shoot</button>
         <button id="restart" style="display: none" onclick="resetGame()">Restart</button>
