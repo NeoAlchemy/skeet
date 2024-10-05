@@ -6,6 +6,8 @@
         <script>
             let targetedClayPigeon = null; // Variable to track the intersected clay pigeon
             let points = 0; // Variable to track points earned
+            let shotsFired = 0;
+            let clayPigeonsDestroyed = 0;
 
             AFRAME.registerComponent('shotgun-raycaster', {
               init: function () {
@@ -19,8 +21,8 @@
                         targetedClayPigeon = intersects[0].object.el;
                         console.log("Shotgun aimed at", targetedClayPigeon.id);
                     } else {
-                    console.log("no target in line of sight")
-                    targetedClayPigeon = null; // No target in line of sight
+                        console.log("no target in line of sight")
+                        targetedClayPigeon = null; // No target in line of sight
                     }
                 });
               }
@@ -28,24 +30,56 @@
 
             // Function to handle the shoot button click
             function shootClayPigeon() {
-                document.getElementById('skeetFireEntity').components.sound.playSound();
-                if (targetedClayPigeon) {
-                    // Hide the clay pigeon if it was hit
-                    targetedClayPigeon.setAttribute('visible', 'false');
-                    targetedClayPigeon.removeAttribute('animation')
-                    targetedClayPigeon.setAttribute('position', '-100, -100,')
-                    let targetedClayPigeonPoints = targetedClayPigeon.getAttribute('data-points');
-                    console.log("points earned: " + targetedClayPigeonPoints +"!");
-                    points += Number(targetedClayPigeonPoints);
-                    setTimeout(() => {
-                        document.getElementById('clayPigeonBreakEntity').components.sound.playSound();
-                    }, 200);
-                    document.getElementById("points").innerHTML = points;
-                    console.log("Pigeon shot:", targetedClayPigeon.id);
-                    targetedClayPigeon = null; // Reset after shooting
+                if (shotsFired < 8) {
+                    document.getElementById('skeetFireEntity').components.sound.playSound();
+                    shotsFired++
+                    document.getElementById("shotgunShell"+shotsFired).style.opacity = 0.3
+                    if (targetedClayPigeon) {
+                        // Hide the clay pigeon if it was hit
+                        targetedClayPigeon.setAttribute('visible', 'false');
+                        targetedClayPigeon.removeAttribute('animation')
+                        targetedClayPigeon.setAttribute('position', '-100, -100,')
+
+                        // Points
+                        let targetedClayPigeonPoints = targetedClayPigeon.getAttribute('data-points');
+                        console.log("points earned: " + targetedClayPigeonPoints +"!");
+                        points += Number(targetedClayPigeonPoints);
+
+                        // count clay pigeons
+                        clayPigeonsDestroyed++
+                        setTimeout(() => {
+                            document.getElementById('clayPigeonBreakEntity').components.sound.playSound();
+                            if (clayPigeonsDestroyed >= 3) {
+                                resetGame(); // go to next level
+                            }
+                        }, 200);
+                        document.getElementById("points").innerHTML = points;
+                        console.log("Pigeon shot:", targetedClayPigeon.id);
+                        targetedClayPigeon = null; // Reset after shooting
+                        
+                    } else {
+                        console.log("No pigeon in sight");
+                        if (shotsFired >= 8 && clayPigeonsDestroyed < 3) {
+                            gameOver()
+                        }
+                    }
                 } else {
-                    console.log("No pigeon in sight");
+                    if (clayPigeonsDestroyed < 3) {
+                        gameOver()
+                    }
                 }
+            }
+
+            function gameOver() {
+                document.getElementById("game-over-screen").style.display = "block"
+                document.getElementById("vrScene").style.display = "none"
+                document.getElementById('shoot').style.display = 'none';
+                document.getElementById('vrScene').style.display = 'none';
+                document.getElementById('points').style.display = 'none';
+                let shotgunShellList = document.querySelectorAll('.shotgunShell')
+                shotgunShellList.forEach((shell) => {
+                    shell.style.display = 'none';
+                })
             }
 
             // Function to reset the game
@@ -72,6 +106,16 @@
                     }
                 });
 
+                let shotgunShellList = document.querySelectorAll('.shotgunShell')
+                shotgunShellList.forEach((shell) => {
+                    shell.style.display = 'block';
+                    shell.style.opacity = 1;
+                })
+
+                targetedClayPigeon = null; // Variable to track the intersected clay pigeon
+                shotsFired = 0;
+                clayPigeonsDestroyed = 0;
+
                 console.log("Game reset!");
             }
 
@@ -85,15 +129,20 @@
 
         function startVR() {
             document.querySelector('.launch-screen').style.display = 'none';
-            
+            document.getElementById("game-over-screen").style.display == 'none';
+
             document.getElementById('shoot').style.display = 'block';
-            document.getElementById('restart').style.display = 'block';
             document.getElementById('vrScene').style.display = 'block';
             document.getElementById('points').style.display = 'block';
             let shotgunShellList = document.querySelectorAll('.shotgunShell')
             shotgunShellList.forEach((shell) => {
                 shell.style.display = 'block';
+                shell.style.opacity = '1';
             })
+            targetedClayPigeon = null; // Variable to track the intersected clay pigeon
+            points = 0; // Variable to track points earned
+            shotsFired = 0;
+            clayPigeonsDestroyed = 0;
             
             const vrScene = document.getElementById('vrScene');
 
@@ -112,7 +161,7 @@
                 touch-action: manipulation; /* Disable gestures like double-tap zoom */
             }
 
-            #shoot, #restart {
+            #shoot {
                 position: absolute;
                 bottom: 20px;
                 z-index: 10;
@@ -148,7 +197,6 @@
 
             #shotgunShell1 {
                 top: 20px;
-                opacity: 0.3
             }
 
             #shotgunShell2 {
@@ -158,7 +206,27 @@
             #shotgunShell3 {
                 top: 80px;
             }
+
+            #shotgunShell4 {
+                top: 110px;
+            }
+
+            #shotgunShell5 {
+                top: 140px;
+            }
+
+            #shotgunShell6 {
+                top: 170px;
+            }
             
+            #shotgunShell7 {
+                top: 200px;
+            }
+
+            #shotgunShell8 {
+                top: 230px;
+            }
+
             #shoot {
                 left: 35%;
             }
@@ -167,7 +235,7 @@
                 left: 55%;
             }
 
-            .launch-screen {
+            .launch-screen, #game-over-screen {
                 height: 100%;
                 margin: 0;
                 display: flex;
@@ -179,7 +247,7 @@
                 text-align: center;
             }
 
-            .launch-screen div {
+            .launch-screen div, #game-over-screen div {
                 text-align: center;
             }
 
@@ -203,6 +271,13 @@
             <div>
                 <h1>Welcome to the Skeet Shooting</h1>
                 <p>Click the button below to start</p>
+                <button id="startVRButton" onclick="startVR()">Start VR</button>
+            </div>
+        </div>
+        <div id="game-over-screen" style="display: none;">
+            <div>
+                <h1>Game Over!</h1>
+                <p>Click the button below to restart</p>
                 <button id="startVRButton" onclick="startVR()">Start VR</button>
             </div>
         </div>
@@ -293,10 +368,14 @@
         <img src="assets/images/shotgun-shell.png" id="shotgunShell1" class="shotgunShell" style="display: none;" />     
         <img src="assets/images/shotgun-shell.png" id="shotgunShell2" class="shotgunShell" style="display: none;" />     
         <img src="assets/images/shotgun-shell.png" id="shotgunShell3" class="shotgunShell" style="display: none;" />     
+        <img src="assets/images/shotgun-shell.png" id="shotgunShell4" class="shotgunShell" style="display: none;" />     
+        <img src="assets/images/shotgun-shell.png" id="shotgunShell5" class="shotgunShell" style="display: none;" />     
+        <img src="assets/images/shotgun-shell.png" id="shotgunShell6" class="shotgunShell" style="display: none;" />     
+        <img src="assets/images/shotgun-shell.png" id="shotgunShell7" class="shotgunShell" style="display: none;" />     
+        <img src="assets/images/shotgun-shell.png" id="shotgunShell8" class="shotgunShell" style="display: none;" />     
         
         <span id="points" style="display: none">0</span>
         <!-- button -->
         <button id="shoot" style="display: none" onclick="shootClayPigeon()">Shoot</button>
-        <button id="restart" style="display: none" onclick="resetGame()">Restart</button>
     </body>
 </html>
