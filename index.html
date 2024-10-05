@@ -180,7 +180,7 @@
                 <button id="startVRButton" onclick="startVR()">Start VR</button>
             </div>
         </div>
-        <a-scene id="vrScene" style="display: none;" vr-mode-ui="enabled: false" renderer="logarithmicDepthBuffer: true;" xr-mode="ar" arjs="trackingMethod: best;">
+        <a-scene id="vrScene" style="display: none;" xr-mode-ui="enabled: false">
             <a-assets>
                 <a-asset-item id="shotgun" src="https://cdn.jsdelivr.net/gh/NeoAlchemy/skeet@main/assets/shotgun/shotgun.gltf"></a-asset-item>
                 <a-asset-item id="clay-pigeon" src="https://cdn.jsdelivr.net/gh/NeoAlchemy/skeet@main/assets/clay-pigeon/scene.gltf" preload="auto"></a-asset-item>
@@ -242,7 +242,7 @@
             
 
             <!-- Camera with look-controls -->
-            <a-entity camera ook-controls="enabled: true" position="0 1.6 0">
+            <a-entity camera look-controls position="0 1.6 0">
                 <!-- Dot showing where raycaster is aiming -->
                 <a-sphere id="aimDot" color="red" radius="0.01" position="0 0 -3" visible="true"></a-sphere>
                 <a-entity 
