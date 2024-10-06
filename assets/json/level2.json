@@ -6,10 +6,11 @@
         "class": "collidable",
         "data-points": "50",
         "position": "-5 0 -3",
+        "scale": "1 1 1",
         "animations": {
           "animation__fall": {
             "property": "position",
-            "to": "5 30 -30",
+            "to": "5 20 -30",
             "dur": 9000,
             "easing": "easeInOutQuad",
             "loop": true
