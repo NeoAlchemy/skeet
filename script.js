@@ -152,33 +152,33 @@ function resetVRStuff() {
         shell.style.opacity = '1';
     })
 
-    const pigeons = ['clayPigeon1', 'clayPigeon2', 'clayPigeon3'];   
-         
-    pigeons.forEach(id => {
-        const pigeon = document.getElementById(id);
-        // Reset visibility
-        pigeon.setAttribute('visible', 'true');
-        
-        // Reset the positions and animations
-        if (id === 'clayPigeon1') {
-            pigeon.setAttribute('position', '-10 0 -20');
-            pigeon.setAttribute('class', 'collidable');
-            pigeon.setAttribute('data-points', '50')
-            pigeon.setAttribute('animation__fall', 'property: position; from: 0 20 -25; dur: 3000; easing: easeInOutQuad; to: 10 0 -30; loop: true');
-            pigeon.setAttribute('animation__smaller', 'property: scale; dur: 3000; to: 0.1 0.1 0.1; loop: true');
-        } else if (id === 'clayPigeon2') {
-            pigeon.setAttribute('data-points', '50')
-            pigeon.setAttribute('class', 'collidable');
-            pigeon.setAttribute('position', '-5 2 -15');
-            pigeon.setAttribute('animation', 'property: position; to: 15 6 -35; dur: 6000; easing: easeInOutQuad; loop: true');
-            pigeon.setAttribute('animation__smaller', 'property: scale; dur: 6000; to: 0.1 0.1 0.1; loop: true');
-        } else if (id === 'clayPigeon3') {
-            pigeon.setAttribute('data-points', '10')
-            pigeon.setAttribute('class', 'collidable');
-            pigeon.setAttribute('position', '-15 3 -10');
-            pigeon.setAttribute('animation', 'property: position; to: 5 8 -20; dur: 5000; easing: easeOutQuad; loop: true');
-        }
-    });
+    fetch('assets/json/level1.json')
+    .then(response => response.json())
+    .then(data => {
+        // For each pigeon in the JSON data
+        data.pigeons.forEach(pigeonData => {
+            const pigeon = document.getElementById(pigeonData.id);
+
+            // Set visibility
+            pigeon.setAttribute('visible', pigeonData.visible.toString());
+
+            // Set class and data-points
+            pigeon.setAttribute('class', pigeonData.class);
+            pigeon.setAttribute('data-points', pigeonData['data-points']);
+
+            // Set position
+            pigeon.setAttribute('position', pigeonData.position);
+
+            // Apply animations
+            if (pigeonData.animations) {
+            Object.keys(pigeonData.animations).forEach(animationKey => {
+                const animation = pigeonData.animations[animationKey];
+                pigeon.setAttribute(animationKey, `property: ${animation.property}; from: ${animation.from || ''}; to: ${animation.to}; dur: ${animation.dur}; easing: ${animation.easing}; loop: ${animation.loop}`);
+            });
+            }
+        });
+    })
+
 
     document.querySelectorAll('.collidable').forEach(pigeon => {
         pigeon.addEventListener('animationtick', function () {
