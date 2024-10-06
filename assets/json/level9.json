@@ -1,0 +1,51 @@
+{
+    "pigeons": [
+      {
+        "id": "clayPigeon1",
+        "visible": true,
+        "class": "collidable",
+        "data-points": "50",
+        "position": "-5 0 -3",
+        "animations": {
+          "animation__fall": {
+            "property": "position",
+            "to": "-5 30 -30",
+            "dur": 6000,
+            "easing": "easeInOutQuad",
+            "loop": true
+          },
+          "animation__smaller": {
+            "property": "scale",
+            "to": "0.1 0.1 0.1",
+            "easing": "linear",
+            "dur": 6000,
+            "loop": true
+          }
+        }
+      },
+      {
+        "id": "clayPigeon2",
+        "visible": true,
+        "class": "collidable",
+        "data-points": "50",
+        "position": "5 0 -3",
+        "animations": {
+          "animation__fall": {
+            "property": "position",
+            "to": "5 30 -30",
+            "dur": 6000,
+            "easing": "easeInOutQuad",
+            "loop": true
+          },
+          "animation__smaller": {
+            "property": "scale",
+            "to": "0.1 0.1 0.1",
+            "easing": "linear",
+            "dur": 6000,
+            "loop": true
+          }
+        }
+      }
+    ]
+  }
+  

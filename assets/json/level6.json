@@ -10,7 +10,7 @@
           "animation__fall": {
             "property": "position",
             "to": "0 30 -30",
-            "dur": 9000,
+            "dur": 6000,
             "easing": "easeInOutQuad",
             "loop": true
           },
@@ -18,7 +18,7 @@
             "property": "scale",
             "to": "0.1 0.1 0.1",
             "easing": "linear",
-            "dur": 9000,
+            "dur": 6000,
             "loop": true
           }
         }

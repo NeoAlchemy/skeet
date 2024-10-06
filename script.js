@@ -1,9 +1,12 @@
 let targetedClayPigeon = null; // Variable to track the intersected clay pigeon
 let points = 0; // Variable to track points earned
+let level = 1; // variable to track level
 let shotsFired = 0;
 let clayPigeonsDestroyed = 0;
+let clayPigeonPerLevel = 1;
 let lastShotTime = 0;  // Keeps track of the last time the function was executed
-const shotCooldown = 1000; // 1 second in milliseconds
+const SHOT_COOLDOWN = 1000; // 1 second in milliseconds
+const MAX_SHOT_SHELL = 8;
 
 AFRAME.registerComponent('shotgun-raycaster', {
     init: function () {
@@ -50,7 +53,7 @@ function shootClayPigeon() {
     const currentTime = Date.now(); // Get current timestamp
 
     // Only allow execution if 1 second has passed since the last execution
-    if (currentTime - lastShotTime < shotCooldown) {
+    if (currentTime - lastShotTime < SHOT_COOLDOWN) {
         return; // Prevent execution
     }
 
@@ -58,7 +61,7 @@ function shootClayPigeon() {
     lastShotTime = currentTime;
 
 
-    if (shotsFired < 8) {
+    if (shotsFired < MAX_SHOT_SHELL) {
         document.getElementById('skeetFireEntity').components.sound.playSound();
         shotsFired++
         document.getElementById("shotgunShell"+shotsFired).style.opacity = 0.3
@@ -78,8 +81,8 @@ function shootClayPigeon() {
             clayPigeonsDestroyed++
             setTimeout(() => {
                 document.getElementById('clayPigeonBreakEntity').components.sound.playSound();
-                if (clayPigeonsDestroyed >= 3) {
-                    resetVRStuff(); // go to next level
+                if (clayPigeonsDestroyed >= clayPigeonPerLevel) {
+                    nextLevel(); // go to next level
                 }
             }, 200);
             document.getElementById("points").innerHTML = points;
@@ -88,12 +91,12 @@ function shootClayPigeon() {
             
         } else {
             console.log("No pigeon in sight");
-            if (shotsFired >= 8 && clayPigeonsDestroyed < 3) {
+            if (shotsFired >= MAX_SHOT_SHELL && clayPigeonsDestroyed < clayPigeonPerLevel) {
                 gameOver()
             }
         }
     } else {
-        if (clayPigeonsDestroyed < 3) {
+        if (clayPigeonsDestroyed < clayPigeonPerLevel) {
             gameOver()
         }
     }
@@ -109,6 +112,7 @@ function hideVRStuff() {
     document.getElementById('shoot').style.display = 'none';
     document.getElementById('vrScene').style.display = 'none';
     document.getElementById('points').style.display = 'none';
+    document.getElementById('level').style.display = 'none';
     document.querySelectorAll('.shotgunShell').forEach((shell) => {
         shell.style.display = 'none';
     })
@@ -127,7 +131,8 @@ function showVRStuff() {
             document.getElementById('loadingScreen').style.display = 'none';
             document.getElementById('shoot').style.display = 'block';
             document.getElementById('points').style.display = 'block'; 
-            resetVRStuff()   
+            document.getElementById('levels').style.display = 'block'; 
+            newVRStuff()   
         });
 
         vrScene.addEventListener('scene-error', function (error) {
@@ -138,12 +143,25 @@ function showVRStuff() {
         document.getElementById("vrScene").style.display = "block"
         document.getElementById('shoot').style.display = 'block';
         document.getElementById('points').style.display = 'block';
-        resetVRStuff()
+        document.getElementById('levels').style.display = 'block';
+        newVRStuff()
     }
+    
+}
 
-    
-    
-    
+function nextLevel() {
+    resetVRStuff();
+    levels++
+    setLevel(levels);
+    document.getElementById("levels").innerHTML = "Level: " + levels;
+}
+
+function newVRStuff() {
+    resetVRStuff();
+    points = 0;
+    levels = 1;
+    setLevel(1);
+    document.getElementById("levels").innerHTML = "Level: " + levels;
 }
 
 function resetVRStuff() {
@@ -152,10 +170,50 @@ function resetVRStuff() {
         shell.style.opacity = '1';
     })
 
-    fetch('assets/json/level1.json')
+    document.querySelectorAll('.collidable').forEach(pigeon => {
+        pigeon.addEventListener('animationtick', function () {
+            document.querySelector('#raycasterEl').components.raycaster.refreshObjects();
+        });
+    });
+
+    // Force loading of A-Frame assets
+    vrScene.setAttribute('visible', 'true');
+
+    // reset global vars for VR
+    targetedClayPigeon = null; 
+    shotsFired = 0;
+    clayPigeonsDestroyed = 0;
+}
+
+function getQueryParam(paramName) {
+    // Get the full URL of the current page
+    const url = window.location.href;
+
+    // Create a URL object
+    const urlParams = new URLSearchParams(window.location.search);
+
+    // Check if a specific query parameter exists
+    if (urlParams.has(paramName)) {
+        // Get the value of the query parameter
+        const paramValue = urlParams.get(paramName);
+        
+        // Do something with the value
+        console.log('Value of paramName:', paramValue);
+        
+        return paramValue;
+    } else {
+        return 0;
+    }
+}
+
+function setLevel(level) {
+    value = getQueryParam('level') ? getQueryParam('level') : level;
+    levels = value;
+    fetch('assets/json/level'+value+'.json')
     .then(response => response.json())
     .then(data => {
         // For each pigeon in the JSON data
+        clayPigeonPerLevel = data.pigeons.length;
         data.pigeons.forEach(pigeonData => {
             const pigeon = document.getElementById(pigeonData.id);
 
@@ -178,22 +236,6 @@ function resetVRStuff() {
             }
         });
     })
-
-
-    document.querySelectorAll('.collidable').forEach(pigeon => {
-        pigeon.addEventListener('animationtick', function () {
-            document.querySelector('#raycasterEl').components.raycaster.refreshObjects();
-        });
-    });
-
-    // Force loading of A-Frame assets
-    vrScene.setAttribute('visible', 'true');
-
-    // reset global vars for VR
-    targetedClayPigeon = null; 
-    points = 0;
-    shotsFired = 0;
-    clayPigeonsDestroyed = 0;
 }
 
 function startVR() {
