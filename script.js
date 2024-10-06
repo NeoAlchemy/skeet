@@ -7,24 +7,42 @@ const shotCooldown = 1000; // 1 second in milliseconds
 
 AFRAME.registerComponent('shotgun-raycaster', {
     init: function () {
-    const raycasterEl = this.el;
-    
-    // Event listener to detect intersection with objects
-    raycasterEl.addEventListener('raycaster-intersection', function(event) {
-        console.log("rayCaster-intersection entered")
-        const intersects = event.detail.intersections;
-        if (intersects.length > 0 && intersects[0].object.el.classList.contains('collidable')) {
-            targetedClayPigeon = intersects[0].object.el;
-            console.log("Shotgun aimed at", targetedClayPigeon.id);
-        } else {
-            console.log("no target in line of sight")
+        const raycasterEl = this.el;
+        
+        // Event listener to detect intersection with objects
+        raycasterEl.addEventListener('raycaster-intersection', function(event) {
+            console.time()
+            console.log("rayCaster-intersection entered")
+            const intersects = event.detail.intersections;
+            if (intersects.length > 0 && intersects[0].object.el.classList.contains('collidable')) {
+                targetedClayPigeon = intersects[0].object.el;
+                console.log("Shotgun aimed at", targetedClayPigeon.id);
+            } else {
+                console.log("no target in line of sight")
+                targetedClayPigeon = null; // No target in line of sight
+            }
+        });
+
+        raycasterEl.addEventListener('raycaster-intersection-cleared', function(event) {
+            console.timeEnd()
+            console.log("rayCaster-intersection exited")
             targetedClayPigeon = null; // No target in line of sight
-        }
-    });
+        });
+    },
+
+    tick: function() {
+        this.el.components.raycaster.refreshObjects();  // Force raycaster to update
     }
 });
 
-
+AFRAME.registerComponent('update-raycaster-target', {
+    init: function () {
+        this.el.addEventListener('animationcomplete', () => {
+            this.el.components.raycaster.refreshObjects();  // Refresh after animations
+            console.log('Pigeon Position:', pigeon.getAttribute('position'));
+        });
+    }
+});
 
 
 // Function to handle the shoot button click
@@ -162,6 +180,11 @@ function resetVRStuff() {
         }
     });
 
+    document.querySelectorAll('.collidable').forEach(pigeon => {
+        pigeon.addEventListener('animationtick', function () {
+            document.querySelector('#raycasterEl').components.raycaster.refreshObjects();
+        });
+    });
 
     // Force loading of A-Frame assets
     vrScene.setAttribute('visible', 'true');
