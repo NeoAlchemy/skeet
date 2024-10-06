@@ -1,0 +1,110 @@
+html, body {
+    touch-action: manipulation; /* Disable gestures like double-tap zoom */
+}
+
+#shoot {
+    position: absolute;
+    bottom: 20px;
+    z-index: 10;
+    padding: 5px 10px;
+    background-color: rgba(255, 255, 255, 0.4);
+    border: 1px solid black;
+    border-radius: 100px;
+    width: 100px;
+    height: 100px;
+    cursor: pointer;
+    font-size: larger;
+}
+
+#points {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    z-index: 10;
+    padding: 5px 10px;
+    color: white;
+    font-size: xx-large;
+    
+}
+
+.shotgunShell {
+    position: absolute;
+    right: 20px;
+    z-index: 10;
+    padding: 5px 10px;
+    height: 5%;
+    transform: rotate(270deg);
+}
+
+#shotgunShell1 {
+    top: 20px;
+}
+
+#shotgunShell2 {
+    top: 50px;
+}
+
+#shotgunShell3 {
+    top: 80px;
+}
+
+#shotgunShell4 {
+    top: 110px;
+}
+
+#shotgunShell5 {
+    top: 140px;
+}
+
+#shotgunShell6 {
+    top: 170px;
+}
+
+#shotgunShell7 {
+    top: 200px;
+}
+
+#shotgunShell8 {
+    top: 230px;
+}
+
+#shoot {
+    left: 35%;
+}
+
+#reset {
+    left: 55%;
+}
+
+.launch-screen, #game-over-screen, #loadingScreen, #errorScreen {
+    height: 100%;
+    margin: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #333;
+    background: url(/assets/images/skeet.jpg);
+    background-size: cover;
+    background-position: center;
+    color: white;
+    font-family: Arial, sans-serif;
+    text-align: center;
+}
+
+.launch-screen div, #game-over-screen div, #loadingScreen div, #errorScreen div {
+    text-align: center;
+}
+
+#startVRButton {
+    padding: 10px 20px;
+    background-color: #007BFF;
+    border: none;
+    color: white;
+    cursor: pointer;
+    font-size: 1.2em;
+    border-radius: 5px;
+}
+
+#startVRButton:hover {
+    background-color: #0056b3;
+}

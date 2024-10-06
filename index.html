@@ -3,289 +3,8 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
         <script src="https://aframe.io/releases/1.6.0/aframe.min.js"></script>
         <script src="https://unpkg.com/aframe-environment-component/dist/aframe-environment-component.min.js"></script>
-        <script>
-            let targetedClayPigeon = null; // Variable to track the intersected clay pigeon
-            let points = 0; // Variable to track points earned
-            let shotsFired = 0;
-            let clayPigeonsDestroyed = 0;
-
-            AFRAME.registerComponent('shotgun-raycaster', {
-              init: function () {
-                const raycasterEl = this.el;
-                
-                // Event listener to detect intersection with objects
-                raycasterEl.addEventListener('raycaster-intersection', function(event) {
-                    console.log("rayCaster-intersection entered")
-                    const intersects = event.detail.intersections;
-                    if (intersects.length > 0 && intersects[0].object.el.classList.contains('collidable')) {
-                        targetedClayPigeon = intersects[0].object.el;
-                        console.log("Shotgun aimed at", targetedClayPigeon.id);
-                    } else {
-                        console.log("no target in line of sight")
-                        targetedClayPigeon = null; // No target in line of sight
-                    }
-                });
-              }
-            });
-
-            // Function to handle the shoot button click
-            function shootClayPigeon() {
-                if (shotsFired < 8) {
-                    document.getElementById('skeetFireEntity').components.sound.playSound();
-                    shotsFired++
-                    document.getElementById("shotgunShell"+shotsFired).style.opacity = 0.3
-                    if (targetedClayPigeon) {
-                        // Hide the clay pigeon if it was hit
-                        targetedClayPigeon.setAttribute('visible', 'false');
-                        targetedClayPigeon.removeAttribute('animation')
-                        targetedClayPigeon.setAttribute('position', '-100, -100,')
-
-                        // Points
-                        let targetedClayPigeonPoints = targetedClayPigeon.getAttribute('data-points');
-                        console.log("points earned: " + targetedClayPigeonPoints +"!");
-                        points += Number(targetedClayPigeonPoints);
-
-                        // count clay pigeons
-                        clayPigeonsDestroyed++
-                        setTimeout(() => {
-                            document.getElementById('clayPigeonBreakEntity').components.sound.playSound();
-                            if (clayPigeonsDestroyed >= 3) {
-                                resetGame(); // go to next level
-                            }
-                        }, 200);
-                        document.getElementById("points").innerHTML = points;
-                        console.log("Pigeon shot:", targetedClayPigeon.id);
-                        targetedClayPigeon = null; // Reset after shooting
-                        
-                    } else {
-                        console.log("No pigeon in sight");
-                        if (shotsFired >= 8 && clayPigeonsDestroyed < 3) {
-                            gameOver()
-                        }
-                    }
-                } else {
-                    if (clayPigeonsDestroyed < 3) {
-                        gameOver()
-                    }
-                }
-            }
-
-            function gameOver() {
-                document.getElementById("game-over-screen").style.display = "block"
-                document.getElementById("vrScene").style.display = "none"
-                document.getElementById('shoot').style.display = 'none';
-                document.getElementById('vrScene').style.display = 'none';
-                document.getElementById('points').style.display = 'none';
-                let shotgunShellList = document.querySelectorAll('.shotgunShell')
-                shotgunShellList.forEach((shell) => {
-                    shell.style.display = 'none';
-                })
-            }
-
-            // Function to reset the game
-            function resetGame() {
-                // Reset all clay pigeons
-                const pigeons = ['clayPigeon1', 'clayPigeon2', 'clayPigeon3'];
-                
-                pigeons.forEach(id => {
-                    const pigeon = document.getElementById(id);
-                    // Reset visibility
-                    pigeon.setAttribute('visible', 'true');
-                    
-                    // Reset the positions and animations
-                    if (id === 'clayPigeon1') {
-                        pigeon.setAttribute('position', '-10 0 -20');
-                        pigeon.setAttribute('animation__fall', 'property: position; from: 0 20 -25; dur: 3000; easing: easeInOutQuad; to: 10 0 -30; loop: true');
-                        pigeon.setAttribute('animation__smaller', 'property: scale; dur: 3000; to: 0.1 0.1 0.1; loop: true');
-                    } else if (id === 'clayPigeon2') {
-                        pigeon.setAttribute('position', '-5 2 -15');
-                        pigeon.setAttribute('animation', 'property: position; to: 12 6 -25; dur: 6000; easing: easeInOutQuad; loop: true');
-                    } else if (id === 'clayPigeon3') {
-                        pigeon.setAttribute('position', '-15 3 -10');
-                        pigeon.setAttribute('animation', 'property: position; to: 5 8 -20; dur: 5000; easing: easeOutQuad; loop: true');
-                    }
-                });
-
-                let shotgunShellList = document.querySelectorAll('.shotgunShell')
-                shotgunShellList.forEach((shell) => {
-                    shell.style.display = 'block';
-                    shell.style.opacity = 1;
-                })
-
-                targetedClayPigeon = null; // Variable to track the intersected clay pigeon
-                shotsFired = 0;
-                clayPigeonsDestroyed = 0;
-
-                console.log("Game reset!");
-            }
-
-            document.addEventListener('gesturestart', function (e) {
-            e.preventDefault(); // Disable gestures (like zoom)
-        });
-
-        document.addEventListener('dblclick', function (e) {
-            e.preventDefault(); // Prevent double-click zoom
-        });
-
-        function startVR() {
-            document.querySelector('.launch-screen').style.display = 'none';
-            document.getElementById("game-over-screen").style.display == 'none';
-
-            document.getElementById('shoot').style.display = 'block';
-            document.getElementById('vrScene').style.display = 'block';
-            document.getElementById('points').style.display = 'block';
-            let shotgunShellList = document.querySelectorAll('.shotgunShell')
-            shotgunShellList.forEach((shell) => {
-                shell.style.display = 'block';
-                shell.style.opacity = '1';
-            })
-            targetedClayPigeon = null; // Variable to track the intersected clay pigeon
-            points = 0; // Variable to track points earned
-            shotsFired = 0;
-            clayPigeonsDestroyed = 0;
-            
-            const vrScene = document.getElementById('vrScene');
-
-            // Once the scene has loaded, hide the loading screen and show the VR scene
-            vrScene.addEventListener('loaded', function() {
-                document.getElementById('loadingScreen').style.display = 'none';
-                vrScene.style.display = 'block';
-            });
-
-            const pigeons = ['clayPigeon1', 'clayPigeon2', 'clayPigeon3'];
-                
-            pigeons.forEach(id => {
-                const pigeon = document.getElementById(id);
-                // Reset visibility
-                pigeon.setAttribute('visible', 'true');
-                
-                // Reset the positions and animations
-                if (id === 'clayPigeon1') {
-                    pigeon.setAttribute('position', '-10 0 -20');
-                    pigeon.setAttribute('animation__fall', 'property: position; from: 0 20 -25; dur: 3000; easing: easeInOutQuad; to: 10 0 -30; loop: true');
-                    pigeon.setAttribute('animation__smaller', 'property: scale; dur: 3000; to: 0.1 0.1 0.1; loop: true');
-                } else if (id === 'clayPigeon2') {
-                    pigeon.setAttribute('position', '-5 2 -15');
-                    pigeon.setAttribute('animation', 'property: position; to: 12 6 -25; dur: 6000; easing: easeInOutQuad; loop: true');
-                } else if (id === 'clayPigeon3') {
-                    pigeon.setAttribute('position', '-15 3 -10');
-                    pigeon.setAttribute('animation', 'property: position; to: 5 8 -20; dur: 5000; easing: easeOutQuad; loop: true');
-                }
-            });
-
-            // Force loading of A-Frame assets
-            vrScene.setAttribute('visible', 'true');
-        };
-        </script>
-        <style>
-            html, body {
-                touch-action: manipulation; /* Disable gestures like double-tap zoom */
-            }
-
-            #shoot {
-                position: absolute;
-                bottom: 20px;
-                z-index: 10;
-                padding: 5px 10px;
-                background-color: rgba(255, 255, 255, 0.4);
-                border: 1px solid black;
-                border-radius: 100px;
-                width: 100px;
-                height: 100px;
-                cursor: pointer;
-                font-size: larger;
-            }
-
-            #points {
-                position: absolute;
-                top: 20px;
-                left: 20px;
-                z-index: 10;
-                padding: 5px 10px;
-                color: white;
-                font-size: xx-large;
-                
-            }
-
-            .shotgunShell {
-                position: absolute;
-                right: 20px;
-                z-index: 10;
-                padding: 5px 10px;
-                height: 5%;
-                transform: rotate(270deg);
-            }
-
-            #shotgunShell1 {
-                top: 20px;
-            }
-
-            #shotgunShell2 {
-                top: 50px;
-            }
-
-            #shotgunShell3 {
-                top: 80px;
-            }
-
-            #shotgunShell4 {
-                top: 110px;
-            }
-
-            #shotgunShell5 {
-                top: 140px;
-            }
-
-            #shotgunShell6 {
-                top: 170px;
-            }
-            
-            #shotgunShell7 {
-                top: 200px;
-            }
-
-            #shotgunShell8 {
-                top: 230px;
-            }
-
-            #shoot {
-                left: 35%;
-            }
-            
-            #reset {
-                left: 55%;
-            }
-
-            .launch-screen, #game-over-screen {
-                height: 100%;
-                margin: 0;
-                display: flex;
-                justify-content: center;
-                align-items: center;
-                background-color: #333;
-                color: white;
-                font-family: Arial, sans-serif;
-                text-align: center;
-            }
-
-            .launch-screen div, #game-over-screen div {
-                text-align: center;
-            }
-
-            #startVRButton {
-                padding: 10px 20px;
-                background-color: #007BFF;
-                border: none;
-                color: white;
-                cursor: pointer;
-                font-size: 1.2em;
-                border-radius: 5px;
-            }
-
-            #startVRButton:hover {
-                background-color: #0056b3;
-            }
-        </style>
+        <script src="script.js" ></script>
+        <link rel="stylesheet" href="style.css" />
     </head>
     <body>
         <div class="launch-screen">
@@ -302,6 +21,16 @@
                 <button id="startVRButton" onclick="startVR()">Start VR</button>
             </div>
         </div>
+        <div id="loadingScreen" style="display: none;">
+            <div>
+                <h1>Loading...</h1>
+            </div>
+        </div>
+        <div id="errorScreen" style="display: none;">
+            <div>
+                <h1>Error...</h1>
+            </div>
+        </div>
         <a-scene id="vrScene" style="display: none;" xr-mode-ui="enabled: true;">
             <a-assets>
                 <a-asset-item id="shotgun" src="https://cdn.jsdelivr.net/gh/NeoAlchemy/skeet@main/assets/shotgun/shotgun.gltf"></a-asset-item>
@@ -313,55 +42,9 @@
             <a-entity id="clayPigeonBreakEntity" sound="src: #clayPigeonBreak"></a-entity>
             <a-entity id="skeetFireEntity" sound="src: #skeetFire"></a-entity>
             <!-- Multiple clay pigeons with different animations -->
-            <a-entity 
-                id="clayPigeon1" 
-                class="collidable" 
-                gltf-model="#clay-pigeon" 
-                data-points="50"
-                position="-10 0 -20" 
-                visible="true"
-                animation__fall="property: position;
-                    from: 0 20 -25; 
-                    dur: 3000; 
-                    easing: easeInOutQuad; 
-                    to: 10 0 -30;
-                    loop: true"
-                animation__smaller="property: scale;
-                    dur: 3000; 
-                    to: 0.1 0.1 0.1;
-                    loop: true" >
-            </a-entity>
-            <!-- <a-entity 
-                id="clayPigeon1" 
-                class="collidable" 
-                gltf-model="#clay-pigeon" 
-                position="-10 1 -20" 
-                scale="0.01 0.01 0.01"
-                visible="true"
-                animation="property: position; to: 10 5 -30; dur: 4000; easing: linear; loop: true">
-            </a-entity> -->
-            <a-entity 
-              id="clayPigeon2" 
-              class="collidable" 
-              gltf-model="#clay-pigeon" 
-              position="-15 2 -15" 
-              material="color: orange"
-              visible="true"
-              data-points="50"
-              animation="property: position; to: 15 6 -35; dur: 6000; easing: easeInOutQuad; loop: true"
-              animation__smaller="property: scale; dur: 6000; to: 0.1 0.1 0.1; loop: true">
-            </a-entity>
-
-            <a-entity 
-              id="clayPigeon3" 
-              class="collidable" 
-              gltf-model="#clay-pigeon" 
-              position="-15 3 -10" 
-              material="color: orange"
-              visible="true"
-              data-points="10"
-              animation="property: position; to: 5 8 -20; dur: 5000; easing: easeOutQuad; loop: true">
-            </a-entity>
+            <a-entity id="clayPigeon1" class="collidable" gltf-model="#clay-pigeon" visible="true"></a-entity>
+            <a-entity id="clayPigeon2" class="collidable" gltf-model="#clay-pigeon" visible="true"></a-entity>
+            <a-entity id="clayPigeon3" class="collidable" gltf-model="#clay-pigeon" visible="true"></a-entity>
 
             
 
@@ -372,8 +55,9 @@
                 <a-entity 
                     id="raycasterEl" 
                     shotgun-raycaster
-                    raycaster="objects: .collidable; far: 100; showLine: true; interval: 100" 
-                    position="0 0 -1"> 
+                    raycaster="objects: .collidable; far: 200; showLine: true; color: blue; interval: 10" 
+                    position="0 0 -1"
+                    rotation="0 0 0"> 
                 </a-entity>
                 <!-- Shotgun with raycaster to detect clayPigeons -->
                 <a-entity 
