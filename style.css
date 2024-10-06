@@ -83,7 +83,7 @@ html, body {
     justify-content: center;
     align-items: center;
     background-color: #333;
-    background: url(/assets/images/skeet.jpg);
+    background: url(assets/images/skeet.jpg);
     background-size: cover;
     background-position: center;
     color: white;
