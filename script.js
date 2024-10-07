@@ -217,15 +217,11 @@ function setLevel(level) {
         data.pigeons.forEach(pigeonData => {
             const pigeon = document.getElementById(pigeonData.id);
 
-            // Set visibility
             pigeon.setAttribute('visible', pigeonData.visible.toString());
-
-            // Set class and data-points
             pigeon.setAttribute('class', pigeonData.class);
             pigeon.setAttribute('data-points', pigeonData['data-points']);
-
-            // Set position
-            pigeon.setAttribute('position', pigeonData.position);
+            pigeon.setAttribute('position', pigeonData.position);          
+            pigeon.setAttribute('scale', pigeonData.scale);
 
             // Apply animations
             if (pigeonData.animations) {
