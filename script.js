@@ -8,6 +8,41 @@ let lastShotTime = 0;  // Keeps track of the last time the function was executed
 const SHOT_COOLDOWN = 1000; // 1 second in milliseconds
 const MAX_SHOT_SHELL = 8;
 
+AFRAME.registerComponent('radar-indicator', {
+    schema: {
+      target: { type: 'selector' }  // The clay pigeon entity
+    },
+    init: function () {
+      this.cameraEl = document.querySelector('#camera');  // Reference to the camera
+      this.radarBlip = document.querySelector('#blip');   // Reference to the blip on the radar
+      this.target = document.querySelector('#clayPigeon1'); //this.data.target;  // The clay pigeon
+    },
+    tick: function () {
+      var cameraPos = new THREE.Vector3();
+      var targetPos = new THREE.Vector3();
+
+      // Get world positions of the camera and clay pigeon
+      this.cameraEl.object3D.getWorldPosition(cameraPos);
+      this.target.object3D.getWorldPosition(targetPos);
+
+      // Calculate 2D position on radar (ignoring vertical difference)
+      var direction = new THREE.Vector3();
+      direction.subVectors(targetPos, cameraPos);
+
+      var angle = Math.atan2(direction.x, direction.z);  // Get angle in the XZ plane
+      var distance = Math.min(direction.length(), 5);  // Limit radar distance to a radius of 5
+
+      // Convert the angle and distance to 2D radar coordinates
+      var scale = 0.5;
+      var radarX = Math.sin(angle) * distance * scale * 0.03;  // Scale distance appropriately
+      var radarY = Math.cos(angle) * distance * scale * 0.03;
+
+      // Update the blip's position on the radar
+      this.radarBlip.object3D.position.set(radarX, -1, -2);
+      this.radarBlip.setAttribute('visible', true);  // Make blip visible
+    }
+  });
+
 AFRAME.registerComponent('shotgun-raycaster', {
     init: function () {
         const raycasterEl = this.el;
